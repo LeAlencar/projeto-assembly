@@ -6,7 +6,6 @@ org 0000h
 	LJMP START
 
 org 0030h
-; put data in ROM
 MAQUINA:
 	DB "MAQUINA DE"
 	DB 00h ;Marca null no fim da String
@@ -37,86 +36,219 @@ DIGITO3:
 FRAPPUCCINO:
 	DB "FRAPPUCCINO"
 	DB 00h ;Marca null no fim da String
+PERGUNTA:
+	DB "VOCE  ESCOLHEU"
+	DB 00h
+CONFIRMACAO:
+	DB "1  SIM"
+	DB 00h
+CONFIRMACAO1:
+	DB "2  NAO"
+	DB 00h
+EXPRESSO1:
+	DB "EXPRESSO"
+	DB 00h
+CAPPUCCINO1:
+	DB "CAPPUCCINO"
+	DB 00h
+FRAPPUCCINO1:
+	DB "FRAPPUCCINO"
+	DB 00h
 
-;MAIN
 org 0100h
 START:
+; put data in ROM
+	MOV 20H, #'#' 
+	MOV 21H, #'0'
+	MOV 22H, #'*'
+	MOV 23H, #'9'
+	MOV 24H, #'8'
+	MOV 25H, #'7'
+	MOV 26H, #'6'
+	MOV 27H, #'5'
+	MOV 28H, #'4'
+	MOV 29H, #'3'
+	MOV 2AH, #'2'
+	MOV 2BH, #'1'
 
-main:
+MAIN:
 	MOV R5, #100
+	MOV R4, #150
 	ACALL lcd_init
+
 ROTINA:
 	ACALL leituraTeclado
-	JNB F0, ROTINA			;if F0 is clear, jump to ROTINA
 	MOV A, #03h
 	ACALL posicionaCursor
-	MOV DPTR, #MAQUINA      ;endereÁo inicial de memÛria da String MAQUINA DE
+	MOV DPTR, #MAQUINA      ;endere o inicial de mem ria da String MAQUINA DE
 	ACALL escreveStringROM
 	MOV A, #46h
  	ACALL posicionaCursor
-	MOV DPTR, #CAFE         ;endereÁo inicial de memÛria da String CAFE
- 	ACALL escreveStringROM
+	MOV DPTR, #CAFE         ;endere o inicial de mem ria da String CAFE
+	ACALL escreveStringROM	
+	CALL delay
 	ACALL clearDisplay
+
 	MOV A, #03h
 	ACALL posicionaCursor
-	MOV DPTR, #ESCOLHA		;endereÁo inicial de memÛria da String ESCOLHA
+	MOV DPTR, #ESCOLHA		;endere o inicial de mem ria da String ESCOLHA
 	ACALL escreveStringROM
 	MOV A, #45h
 	ACALL posicionaCursor
-	MOV DPTR, #SABOR		;endereÁo inicial de memÛria da String SABOR
+	MOV DPTR, #SABOR		;endere o inicial de mem ria da String SABOR
 	ACALL escreveStringROM
 	MOV A, R5
 	MOV B, #10
 	DIV AB
 	ADD A, #30h
+	CALL delay
 	ACALL sendCharacter
 	ACALL clearDisplay
+
 	MOV A, #04h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO1		;endereÁo inicial de memÛria da String DIGITO1
+	MOV DPTR, #DIGITO1		;endere o inicial de mem ria da String DIGITO1
 	ACALL escreveStringROM
 	MOV A, #41h
 	ACALL posicionaCursor
-	MOV DPTR, #EXPRESSO		;endereÁo inicial de memÛria da String EXPRESSO
+	MOV DPTR, #EXPRESSO		;endere o inicial de mem ria da String EXPRESSO
 	ACALL escreveStringROM
+	CALL delay1
 	ACALL sendCharacter
+	ACALL leituraTeclado
+	JNB F0, CONTINUE
+	LJMP QUESTIONA
+ 
+CONTINUE:
 	ACALL clearDisplay
 	MOV A, #04h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO2		;endereÁo inicial de memÛria da String DIGITO2
+	MOV DPTR, #DIGITO2		;endere o inicial de mem ria da String DIGITO2
 	ACALL escreveStringROM
 	MOV A, #43h
 	ACALL posicionaCursor
-	MOV DPTR, #CAPPUCCINO	;endereÁo inicial de memÛria da String CAPPUCCINO
+	MOV DPTR, #CAPPUCCINO	;endere o inicial de mem ria da String CAPPUCCINO
 	ACALL escreveStringROM
+	CALL delay1
 	ACALL sendCharacter
+	ACALL leituraTeclado
+	JNB F0, CONTINUE1
+	LJMP QUESTIONA1
+	
+CONTINUE1:
 	ACALL clearDisplay
 	MOV A, #04h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO3		;endereÁo inicial de memÛria da String DIGITO3
+	MOV DPTR, #DIGITO3		;endere o inicial de mem ria da String DIGITO3
 	ACALL escreveStringROM
 	MOV A, #43h
 	ACALL posicionaCursor
-	MOV DPTR, #FRAPPUCCINO	;endereÁo inicial de memÛria da String FRAPPUCCINO
+	MOV DPTR, #FRAPPUCCINO	;endere o inicial de mem ria da String FRAPPUCCINO
 	ACALL escreveStringROM
+	CALL delay1
 	ACALL sendCharacter
-	ACALL clearDisplay
-	JMP main
+	ACALL leituraTeclado
+	JNB F0, CONTINUE2
+	LJMP QUESTIONA2
 
+CONTINUE2:
+	ACALL clearDisplay
+	JMP MAIN
+
+QUESTIONA:
+	ACALL clearDisplay
+	MOV A, #01h
+	ACALL posicionaCursor
+	MOV DPTR, #PERGUNTA
+	ACALL escreveStringROM
+	MOV A, #43h
+	ACALL posicionaCursor
+	MOV DPTR, #EXPRESSO1
+	ACALL escreveStringROM
+	MOV A, R4
+	MOV B, #10
+	DIV AB
+	ADD A, #30h
+	ACALL sendCharacter
+	CALL delay
+	ACALL clearDisplay
+	MOV A, #05h
+	ACALL posicionaCursor
+	MOV DPTR, #CONFIRMACAO
+	ACALL escreveStringROM
+	MOV A, #45h
+	ACALL posicionaCursor
+	MOV DPTR, #CONFIRMACAO1
+	ACALL escreveStringROM
+	CALL delay1
+	
+QUESTIONA1:
+	ACALL clearDisplay
+	MOV A, #01h
+	ACALL posicionaCursor
+	MOV DPTR, #PERGUNTA
+	ACALL escreveStringROM
+	MOV A, #43h
+	ACALL posicionaCursor
+	MOV DPTR, #CAPPUCCINO1
+	ACALL escreveStringROM
+	MOV A, R4
+	MOV B, #10
+	DIV AB
+	ADD A, #30h
+	ACALL sendCharacter
+	CALL delay
+	ACALL clearDisplay
+	MOV A, #05h
+	ACALL posicionaCursor
+	MOV DPTR, #CONFIRMACAO
+	ACALL escreveStringROM
+	MOV A, #45h
+	ACALL posicionaCursor
+	MOV DPTR, #CONFIRMACAO1
+	ACALL escreveStringROM
+	CALL delay1
+
+QUESTIONA2:
+	ACALL clearDisplay
+	MOV A, #01h
+	ACALL posicionaCursor
+	MOV DPTR, #PERGUNTA
+	ACALL escreveStringROM
+	MOV A, #42h
+	ACALL posicionaCursor
+	MOV DPTR, #FRAPPUCCINO1
+	ACALL escreveStringROM
+	MOV A, R4
+	MOV B, #10
+	DIV AB
+	ADD A, #30h
+	ACALL sendCharacter
+	CALL delay
+	ACALL clearDisplay
+	MOV A, #05h
+	ACALL posicionaCursor
+	MOV DPTR, #CONFIRMACAO
+	ACALL escreveStringROM
+	MOV A, #45h
+	ACALL posicionaCursor
+	MOV DPTR, #CONFIRMACAO1
+	ACALL escreveStringROM
+	CALL delay1
 
 escreveStringROM:
   MOV R1, #00h
 	; Inicia a escrita da String no CAFE
 loop:
   MOV A, R1
-	MOVC A,@A+DPTR 	 ;lÍ da memÛria de programa
+	MOVC A,@A+DPTR 	 ;l  da memoria de programa
 	JZ finish		; if A is 0, then end of data has been reached - jump out of loop
 	ACALL sendCharacter	; send data in A to LCD module
 	INC R1			; point to next piece of data
    MOV A, R1
 	JMP loop		; repeat
 ;finish:
-	RET
+;	RET
 
 leituraTeclado:
 	MOV R0, #0			; clear R0 - the first key is key0
@@ -264,7 +396,7 @@ sendCharacter:
 	RET
 
 ;Posiciona o cursor na linha e coluna desejada.
-;Escreva no Acumulador o valor de endereÁo da linha e coluna.
+;Escreva no Acumulador o valor de endere o da linha e coluna.
 ;|--------------------------------------------------------------------------------------|
 ;|linha 1 | 00 | 01 | 02 | 03 | 04 |05 | 06 | 07 | 08 | 09 |0A | 0B | 0C | 0D | 0E | 0F |
 ;|linha 2 | 40 | 41 | 42 | 43 | 44 |45 | 46 | 47 | 48 | 49 |4A | 4B | 4C | 4D | 4E | 4F |
@@ -295,11 +427,11 @@ posicionaCursor:
 	CLR EN			; | negative edge on E
 
 	CALL delay			; wait for BF to clear
-	CALL delay			; wait for BF to clear
+	CALL delay  		; wait for BF to clear
 	RET
 
 
-;Retorna o cursor para primeira posiÁ„o sem limpar o display
+;Retorna o cursor para primeira posi  o sem limpar o display
 retornaCursor:
 	CLR RS	
 	CLR P1.7		; |
@@ -349,6 +481,19 @@ clearDisplay:
 
 
 delay:
-	MOV R0, #50
-	DJNZ R0, $
+	MOV R7, #50
+	DJNZ R7, $
 	RET
+
+delay1:
+	MOV R1, #10
+	loop1:
+	MOV R0, #255
+	DJNZ R0, $
+	DJNZ R1, loop1
+	RET
+
+
+
+
+
