@@ -64,6 +64,9 @@ PRONTO1:
 	DB "PRONTO!"
 	DB 00h
 
+CONFIRMACAOE:
+    DB "VOCE ESCOLHEU"
+
 org 0100h
 START:
 ; put data in ROM
@@ -95,8 +98,6 @@ ROTINA:
 	ACALL escreveStringROM	
 	CALL delay
 	ACALL clearDisplay
-	LJMP OPCAO
-OPCAO:
 	MOV A, #03h
 	ACALL posicionaCursor
 	MOV DPTR, #ESCOLHA		;endereco inicial de mem ria da String ESCOLHA
@@ -121,12 +122,7 @@ OPCAO:
 	ACALL posicionaCursor
 	MOV DPTR, #EXPRESSO		;endereco inicial de mem ria da String EXPRESSO
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
-	ACALL leituraTeclado
-	JNB F0, CONTINUE
-	LJMP QUESTIONA
-CONTINUE:
+	CALL delay
 	ACALL clearDisplay
 	MOV A, #04h
 	ACALL posicionaCursor
@@ -136,12 +132,7 @@ CONTINUE:
 	ACALL posicionaCursor
 	MOV DPTR, #CAPPUCCINO	;endereco inicial de mem ria da String CAPPUCCINO
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
-	ACALL leituraTeclado
-	JNB F0, CONTINUE1
-	LJMP QUESTIONA1
-CONTINUE1:
+	CALL delay
 	ACALL clearDisplay
 	MOV A, #04h
 	ACALL posicionaCursor
@@ -151,14 +142,27 @@ CONTINUE1:
 	ACALL posicionaCursor
 	MOV DPTR, #FRAPPUCCINO	;endereco inicial de mem ria da String FRAPPUCCINO
 	ACALL escreveStringROM
-	CALL delay1
+	CALL delay
 	ACALL sendCharacter
-	ACALL leituraTeclado
-	JNB F0, CONTINUE2
-	LJMP QUESTIONA2
-CONTINUE2:
 	ACALL clearDisplay
-	JMP MAIN
+	MOV A, #03h
+	ACALL posicionaCursor
+	MOV DPTR, #ESCOLHA
+	ACALL escreveStringROM
+	CALL delay
+OPCAO:
+	ACALL leituraTeclado
+	JNB F0, OPCAO
+	CJNE R0, #11h, PROXIMO
+	ACALL QUESTIONA
+PROXIMO:
+	CJNE R0, #7h, PROXIMO1
+	ACALL QUESTIONA1
+PROXIMO1:
+	CJNE R0, #3h, PROXIMO2
+	ACALL CONTINUE3
+PROXIMO2:
+	JMP ROTINA
 QUESTIONA:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -186,12 +190,13 @@ QUESTIONA:
 	ACALL escreveStringROM
 	CALL delay1
 	ACALL sendCharacter
+RET
+OPCAO1:
 	ACALL leituraTeclado
-	JNB F0, CONTINUE2
-    LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+	JNB F0, OPCAO1
+  	LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
 CONTINUE3:
-	ACALL clearDisplay
-	JMP MAIN
+	LJMP QUESTIONA2	
 QUESTIONA1:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -219,9 +224,11 @@ QUESTIONA1:
 	ACALL escreveStringROM
 	CALL delay1
 	ACALL sendCharacter
+RET
+OPCAO2:
 	ACALL leituraTeclado
-	JNB F0, CONTINUE3
-    LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+	JNB F0, OPCAO2
+   LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
 QUESTIONA2:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -249,9 +256,11 @@ QUESTIONA2:
 	ACALL escreveStringROM
 	CALL delay1
 	ACALL sendCharacter
+RET
+OPCAO3:
 	ACALL leituraTeclado
-	JNB F0, CONTINUE3
-    LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+	JNB F0, OPCAO3
+   LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
 PREPARANDO1:
 	ACALL clearDisplay
 	MOV A, #02h
