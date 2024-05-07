@@ -11,31 +11,31 @@ MAQUINA:
 	DB 00h ;Marca null no fim da String
 CAFE:
 	DB "CAFE"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 ESCOLHA:
 	DB "ESCOLHA UM"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 SABOR:
 	DB "SABOR"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 DIGITO1:
 	DB "DIGITE 1"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 EXPRESSO:
 	DB "PARA  EXPRESSO"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 DIGITO2:
-	DB "DIGITE 2"
-	DB 00h ;Marca null no fim da String
+	DB "DIGITE 5"
+	DB 00h 
 CAPPUCCINO:
 	DB "CAPPUCCINO"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 DIGITO3:
-	DB "DIGITE 3"
-	DB 00h ;Marca null no fim da String
+	DB "DIGITE 9"
+	DB 00h 
 FRAPPUCCINO:
 	DB "FRAPPUCCINO"
-	DB 00h ;Marca null no fim da String
+	DB 00h 
 PERGUNTA:
 	DB "VOCE  ESCOLHEU"
 	DB 00h
@@ -43,7 +43,7 @@ CONFIRMACAO:
 	DB "1  SIM"
 	DB 00h
 CONFIRMACAO1:
-	DB "2  NAO"
+	DB "0  NAO"
 	DB 00h
 EXPRESSO1:
 	DB "EXPRESSO"
@@ -54,48 +54,57 @@ CAPPUCCINO1:
 FRAPPUCCINO1:
 	DB "FRAPPUCCINO"
 	DB 00h
+PREPARANDO:
+	DB "PREPARANDO..."
+	DB 00h
+PRONTO:
+	DB "SEU CAFE ESTA"
+	DB 00h
+PRONTO1:
+	DB "PRONTO!"
+	DB 00h
+
+CONFIRMACAOE:
+    DB "VOCE ESCOLHEU"
 
 org 0100h
 START:
 ; put data in ROM
-	MOV 20H, #'#' 
-	MOV 21H, #'0'
-	MOV 22H, #'*'
-	MOV 23H, #'9'
-	MOV 24H, #'8'
-	MOV 25H, #'7'
-	MOV 26H, #'6'
-	MOV 27H, #'5'
-	MOV 28H, #'4'
-	MOV 29H, #'3'
-	MOV 2AH, #'2'
-	MOV 2BH, #'1'
-
+	MOV 40H, #'#' 
+	MOV 41H, #'0'
+	MOV 42H, #'*'
+	MOV 43H, #'9'
+	MOV 44H, #'8'
+	MOV 45H, #'7'
+	MOV 46H, #'6'
+	MOV 47H, #'5'
+	MOV 48H, #'4'
+	MOV 49H, #'3'
+	MOV 4AH, #'2'
+	MOV 4BH, #'1'
 MAIN:
 	MOV R5, #100
 	MOV R4, #150
 	ACALL lcd_init
-
 ROTINA:
 	ACALL leituraTeclado
 	MOV A, #03h
 	ACALL posicionaCursor
-	MOV DPTR, #MAQUINA      ;endere o inicial de mem ria da String MAQUINA DE
+	MOV DPTR, #MAQUINA      ;endereco inicial de mem ria da String MAQUINA DE
 	ACALL escreveStringROM
 	MOV A, #46h
  	ACALL posicionaCursor
-	MOV DPTR, #CAFE         ;endere o inicial de mem ria da String CAFE
+	MOV DPTR, #CAFE         ;endereco inicial de mem ria da String CAFE
 	ACALL escreveStringROM	
 	CALL delay
 	ACALL clearDisplay
-
 	MOV A, #03h
 	ACALL posicionaCursor
-	MOV DPTR, #ESCOLHA		;endere o inicial de mem ria da String ESCOLHA
+	MOV DPTR, #ESCOLHA		;endereco inicial de mem ria da String ESCOLHA
 	ACALL escreveStringROM
 	MOV A, #45h
 	ACALL posicionaCursor
-	MOV DPTR, #SABOR		;endere o inicial de mem ria da String SABOR
+	MOV DPTR, #SABOR		;endereco inicial de mem ria da String SABOR
 	ACALL escreveStringROM
 	MOV A, R5
 	MOV B, #10
@@ -104,57 +113,56 @@ ROTINA:
 	CALL delay
 	ACALL sendCharacter
 	ACALL clearDisplay
-
+	;primeiro digito
 	MOV A, #04h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO1		;endere o inicial de mem ria da String DIGITO1
+	MOV DPTR, #DIGITO1		;endereco inicial de mem ria da String DIGITO1
 	ACALL escreveStringROM
 	MOV A, #41h
 	ACALL posicionaCursor
-	MOV DPTR, #EXPRESSO		;endere o inicial de mem ria da String EXPRESSO
+	MOV DPTR, #EXPRESSO		;endereco inicial de mem ria da String EXPRESSO
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
-	ACALL leituraTeclado
-	JNB F0, CONTINUE
-	LJMP QUESTIONA
- 
-CONTINUE:
+	CALL delay
 	ACALL clearDisplay
 	MOV A, #04h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO2		;endere o inicial de mem ria da String DIGITO2
+	MOV DPTR, #DIGITO2		;endereco inicial de mem ria da String DIGITO2
 	ACALL escreveStringROM
 	MOV A, #43h
 	ACALL posicionaCursor
-	MOV DPTR, #CAPPUCCINO	;endere o inicial de mem ria da String CAPPUCCINO
+	MOV DPTR, #CAPPUCCINO	;endereco inicial de mem ria da String CAPPUCCINO
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
-	ACALL leituraTeclado
-	JNB F0, CONTINUE1
-	LJMP QUESTIONA1
-	
-CONTINUE1:
+	CALL delay
 	ACALL clearDisplay
 	MOV A, #04h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO3		;endere o inicial de mem ria da String DIGITO3
+	MOV DPTR, #DIGITO3		;endereco inicial de mem ria da String DIGITO3
 	ACALL escreveStringROM
 	MOV A, #43h
 	ACALL posicionaCursor
-	MOV DPTR, #FRAPPUCCINO	;endere o inicial de mem ria da String FRAPPUCCINO
+	MOV DPTR, #FRAPPUCCINO	;endereco inicial de mem ria da String FRAPPUCCINO
 	ACALL escreveStringROM
-	CALL delay1
+	CALL delay
 	ACALL sendCharacter
-	ACALL leituraTeclado
-	JNB F0, CONTINUE2
-	LJMP QUESTIONA2
-
-CONTINUE2:
 	ACALL clearDisplay
-	JMP MAIN
-
+	MOV A, #03h
+	ACALL posicionaCursor
+	MOV DPTR, #ESCOLHA
+	ACALL escreveStringROM
+	CALL delay
+OPCAO:
+	ACALL leituraTeclado
+	JNB F0, OPCAO
+	CJNE R0, #11h, PROXIMO
+	ACALL QUESTIONA
+PROXIMO:
+	CJNE R0, #7h, PROXIMO1
+	ACALL QUESTIONA1
+PROXIMO1:
+	CJNE R0, #3h, PROXIMO2
+	ACALL CONTINUE3
+PROXIMO2:
+	JMP ROTINA
 QUESTIONA:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -181,7 +189,14 @@ QUESTIONA:
 	MOV DPTR, #CONFIRMACAO1
 	ACALL escreveStringROM
 	CALL delay1
-	
+	ACALL sendCharacter
+RET
+OPCAO1:
+	ACALL leituraTeclado
+	JNB F0, OPCAO1
+  	LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+CONTINUE3:
+	LJMP QUESTIONA2	
 QUESTIONA1:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -208,7 +223,12 @@ QUESTIONA1:
 	MOV DPTR, #CONFIRMACAO1
 	ACALL escreveStringROM
 	CALL delay1
-
+	ACALL sendCharacter
+RET
+OPCAO2:
+	ACALL leituraTeclado
+	JNB F0, OPCAO2
+   LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
 QUESTIONA2:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -235,6 +255,33 @@ QUESTIONA2:
 	MOV DPTR, #CONFIRMACAO1
 	ACALL escreveStringROM
 	CALL delay1
+	ACALL sendCharacter
+RET
+OPCAO3:
+	ACALL leituraTeclado
+	JNB F0, OPCAO3
+   LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+PREPARANDO1:
+	ACALL clearDisplay
+	MOV A, #02h
+	ACALL posicionaCursor
+	MOV DPTR, #PREPARANDO
+	ACALL escreveStringROM
+	CALL delay1
+	LJMP PRONTO2
+PRONTO2:
+	ACALL clearDisplay
+	MOV A, #02h
+	ACALL posicionaCursor
+	MOV DPTR, #PRONTO
+	ACALL escreveStringROM
+	MOV A, #44h
+	ACALL posicionaCursor
+	MOV DPTR, #PRONTO1
+	ACALL escreveStringROM
+	CALL delay1
+	ACALL clearDisplay
+	LJMP ROTINA
 
 escreveStringROM:
   MOV R1, #00h
@@ -247,52 +294,52 @@ loop:
 	INC R1			; point to next piece of data
    MOV A, R1
 	JMP loop		; repeat
-;finish:
-;	RET
-
-leituraTeclado:
-	MOV R0, #0			; clear R0 - the first key is key0
-
-	; scan row0
-	MOV P0, #0FFh	
-	CLR P0.0			; clear row0
-	CALL colScan		; call column-scan subroutine
-	JB F0, finish		; | if F0 is set, jump to end of program 
-						; | (because the pressed key was found and its number is in  R0)
-	; scan row1
-	SETB P0.0			; set row0
-	CLR P0.1			; clear row1
-	CALL colScan		; call column-scan subroutine
-	JB F0, finish		; | if F0 is set, jump to end of program 
-						; | (because the pressed key was found and its number is in  R0)
-	; scan row2
-	SETB P0.1			; set row1
-	CLR P0.2			; clear row2
-	CALL colScan		; call column-scan subroutine
-	JB F0, finish		; | if F0 is set, jump to end of program 
-						; | (because the pressed key was found and its number is in  R0)
-	; scan row3
-	SETB P0.2			; set row2
-	CLR P0.3			; clear row3
-	CALL colScan		; call column-scan subroutine
-	JB F0, finish		; | if F0 is set, jump to end of program 
-						; | (because the pressed key was found and its number is in  R0)
 finish:
 	RET
 
-; column-scan subroutine
+leituraTeclado:
+    MOV R0, #0           ; zera R0 para começar a verificação
+
+    ; escanear a primeira linha
+    MOV P0, #0FFh   
+    CLR P0.0            ; limpa a primeira linha
+    CALL colScan        ; chama subrotina para escanear as colunas
+    JB F0, finish1       ; se a flag F0 estiver definida, sai da subrotina
+
+    ; escanear a segunda linha
+    SETB P0.0           ; define a primeira linha
+    CLR P0.1            ; limpa a segunda linha
+    CALL colScan        ; chama subrotina para escanear as colunas
+    JB F0, finish1       ; se F0 for definida, sai da subrotina
+
+    ; escanear a terceira linha
+    SETB P0.1           ; define a segunda linha
+    CLR P0.2            ; limpa a terceira linha
+    CALL colScan        ; chama subrotina para escanear as colunas
+    JB F0, finish1       ; se F0 for definida, sai da subrotina
+
+    ; escanear a quarta linha
+    SETB P0.2           ; define a terceira linha
+    CLR P0.3            ; limpa a quarta linha
+    CALL colScan        ; chama subrotina para escanear as colunas
+    JB F0, finish1       ; se F0 for definida, sai da subrotina
+
+finish1:
+    RET                 ; retorna se nenhuma tecla foi pressionada
+
 colScan:
-	JNB P0.4, gotKey	; if col0 is cleared - key found
-	INC R0				; otherwise move to next key
-	JNB P0.5, gotKey	; if col1 is cleared - key found
-	INC R0				; otherwise move to next key
-	JNB P0.6, gotKey	; if col2 is cleared - key found
-	INC R0				; otherwise move to next key
-	RET					; return from subroutine - key not found
+    JNB P0.4, gotKey    ; se a primeira coluna estiver limpa, tecla foi pressionada
+    INC R0              ; incrementa para verificar a próxima tecla
+    JNB P0.5, gotKey    ; verifica a segunda coluna
+    INC R0              ; incrementa para verificar a próxima tecla
+    JNB P0.6, gotKey    ; verifica a terceira coluna
+    INC R0              ; incrementa para verificar a próxima tecla
+    RET                 ; retorna se nenhuma tecla foi encontrada
+
 gotKey:
-	SETB F0				; key found - set F0
-	RET					; and return from subroutine
-	
+    SETB F0             ; define a flag F0 para indicar que uma tecla foi encontrada
+    RET                 ; retorna se uma tecla foi encontrada
+
 ; initialise the display
 ; see instruction set for details
 lcd_init:
@@ -323,7 +370,6 @@ lcd_init:
 				; function set low nibble sent
 	CALL delay		; wait for BF to clear
 
-
 ; entry mode set
 ; set to increment with no shift
 	CLR P1.7		; |
@@ -341,7 +387,6 @@ lcd_init:
 	CLR EN		; | negative edge on E
 
 	CALL delay		; wait for BF to clear
-
 
 ; display on/off control
 ; the display is turned on, the cursor is turned on and blinking is turned on
@@ -363,7 +408,6 @@ lcd_init:
 
 	CALL delay		; wait for BF to clear
 	RET
-
 
 sendCharacter:
 	SETB RS  		; setb RS - indicates that data is being sent to module
@@ -492,8 +536,3 @@ delay1:
 	DJNZ R0, $
 	DJNZ R1, loop1
 	RET
-
-
-
-
-
