@@ -19,19 +19,19 @@ SABOR:
 	DB "SABOR"
 	DB 00h 
 DIGITO1:
-	DB "DIGITE 1"
+	DB "DIGITE 1|2|3"
 	DB 00h 
 EXPRESSO:
 	DB "PARA  EXPRESSO"
 	DB 00h 
 DIGITO2:
-	DB "DIGITE 5"
+	DB "DIGITE 4|5|6"
 	DB 00h 
 CAPPUCCINO:
 	DB "CAPPUCCINO"
 	DB 00h 
 DIGITO3:
-	DB "DIGITE 9"
+	DB "DIGITE 7|8|9"
 	DB 00h 
 FRAPPUCCINO:
 	DB "FRAPPUCCINO"
@@ -40,10 +40,10 @@ PERGUNTA:
 	DB "VOCE  ESCOLHEU"
 	DB 00h
 CONFIRMACAO:
-	DB "1  SIM"
+	DB "*  SIM"
 	DB 00h
 CONFIRMACAO1:
-	DB "0  NAO"
+	DB "#  NAO"
 	DB 00h
 EXPRESSO1:
 	DB "EXPRESSO"
@@ -63,9 +63,6 @@ PRONTO:
 PRONTO1:
 	DB "PRONTO!"
 	DB 00h
-
-CONFIRMACAOE:
-    DB "VOCE ESCOLHEU"
 
 org 0100h
 START:
@@ -87,20 +84,21 @@ MAIN:
 	MOV R4, #150
 	ACALL lcd_init
 ROTINA:
+	ACALL clearDisplay
 	ACALL leituraTeclado
 	MOV A, #03h
 	ACALL posicionaCursor
-	MOV DPTR, #MAQUINA      ;endereco inicial de mem ria da String MAQUINA DE
+	MOV DPTR, #MAQUINA      ;endereco inicial de memoria da String MAQUINA DE
 	ACALL escreveStringROM
 	MOV A, #46h
  	ACALL posicionaCursor
-	MOV DPTR, #CAFE         ;endereco inicial de mem ria da String CAFE
+	MOV DPTR, #CAFE         
 	ACALL escreveStringROM	
 	CALL delay
 	ACALL clearDisplay
 	MOV A, #03h
 	ACALL posicionaCursor
-	MOV DPTR, #ESCOLHA		;endereco inicial de mem ria da String ESCOLHA
+	MOV DPTR, #ESCOLHA		
 	ACALL escreveStringROM
 	MOV A, #45h
 	ACALL posicionaCursor
@@ -113,34 +111,33 @@ ROTINA:
 	CALL delay
 	ACALL sendCharacter
 	ACALL clearDisplay
-	;primeiro digito
-	MOV A, #04h
+	MOV A, #02h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO1		;endereco inicial de mem ria da String DIGITO1
+	MOV DPTR, #DIGITO1		
 	ACALL escreveStringROM
 	MOV A, #41h
 	ACALL posicionaCursor
-	MOV DPTR, #EXPRESSO		;endereco inicial de mem ria da String EXPRESSO
+	MOV DPTR, #EXPRESSO		
 	ACALL escreveStringROM
 	CALL delay
 	ACALL clearDisplay
-	MOV A, #04h
+	MOV A, #02h
 	ACALL posicionaCursor
 	MOV DPTR, #DIGITO2		;endereco inicial de mem ria da String DIGITO2
 	ACALL escreveStringROM
 	MOV A, #43h
 	ACALL posicionaCursor
-	MOV DPTR, #CAPPUCCINO	;endereco inicial de mem ria da String CAPPUCCINO
+	MOV DPTR, #CAPPUCCINO	 
 	ACALL escreveStringROM
 	CALL delay
 	ACALL clearDisplay
-	MOV A, #04h
+	MOV A, #02h
 	ACALL posicionaCursor
-	MOV DPTR, #DIGITO3		;endereco inicial de mem ria da String DIGITO3
+	MOV DPTR, #DIGITO3		 
 	ACALL escreveStringROM
 	MOV A, #43h
 	ACALL posicionaCursor
-	MOV DPTR, #FRAPPUCCINO	;endereco inicial de mem ria da String FRAPPUCCINO
+	MOV DPTR, #FRAPPUCCINO	
 	ACALL escreveStringROM
 	CALL delay
 	ACALL sendCharacter
@@ -150,9 +147,9 @@ ROTINA:
 	MOV DPTR, #ESCOLHA
 	ACALL escreveStringROM
 	CALL delay
+
 OPCAO:
 	ACALL leituraTeclado
-	JNB F0, OPCAO
 	CJNE R0, #11h, PROXIMO
 	ACALL QUESTIONA
 PROXIMO:
@@ -160,10 +157,12 @@ PROXIMO:
 	ACALL QUESTIONA1
 PROXIMO1:
 	CJNE R0, #3h, PROXIMO2
-	ACALL CONTINUE3
+	ACALL QUESTIONA2
 PROXIMO2:
-	JMP ROTINA
-QUESTIONA:
+	JNB F0, OPCAO
+;retorna p/ opcao ate usar teclado
+
+QUESTIONA:	;funcao p/ confirmar escolha
 	ACALL clearDisplay
 	MOV A, #01h
 	ACALL posicionaCursor
@@ -177,8 +176,8 @@ QUESTIONA:
 	MOV B, #10
 	DIV AB
 	ADD A, #30h
-	ACALL sendCharacter
 	CALL delay
+	ACALL sendCharacter
 	ACALL clearDisplay
 	MOV A, #05h
 	ACALL posicionaCursor
@@ -188,15 +187,22 @@ QUESTIONA:
 	ACALL posicionaCursor
 	MOV DPTR, #CONFIRMACAO1
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
+	CALL delay
+	JMP OPCAO1
 RET
+
 OPCAO1:
 	ACALL leituraTeclado
-	JNB F0, OPCAO1
-  	LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
-CONTINUE3:
-	LJMP QUESTIONA2	
+	CJNE R0, #2h, PROXIMO3
+  	ACALL PREPARANDO1
+PROXIMO3:
+	CJNE R0, #0h, PROXIMO4
+	ACALL clearDisplay
+	ACALL ROTINA
+PROXIMO4:	
+	JMP OPCAO1
+;retorna p/ OPCAO1 ate usar * ou #
+
 QUESTIONA1:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -222,13 +228,20 @@ QUESTIONA1:
 	ACALL posicionaCursor
 	MOV DPTR, #CONFIRMACAO1
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
+	CALL delay
+	JMP OPCAO2
 RET
+
 OPCAO2:
 	ACALL leituraTeclado
-	JNB F0, OPCAO2
-   LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+	CJNE R0, #2h, PROXIMO5
+  	ACALL PREPARANDO1           
+PROXIMO5:
+	CJNE R0, #0h, PROXIMO6
+	ACALL ROTINA
+PROXIMO6:
+	JMP OPCAO2
+
 QUESTIONA2:
 	ACALL clearDisplay
 	MOV A, #01h
@@ -254,13 +267,20 @@ QUESTIONA2:
 	ACALL posicionaCursor
 	MOV DPTR, #CONFIRMACAO1
 	ACALL escreveStringROM
-	CALL delay1
-	ACALL sendCharacter
+	CALL delay
+	JMP OPCAO3
 RET
+
 OPCAO3:
 	ACALL leituraTeclado
-	JNB F0, OPCAO3
-   LJMP PREPARANDO1           ; pressionar tecla vai para PREPARANDO1
+	CJNE R0, #2h, PROXIMO7
+  	ACALL PREPARANDO1
+PROXIMO7:
+	CJNE R0, #0h, PROXIMO8
+	ACALL ROTINA
+PROXIMO8:
+	JMP OPCAO3
+
 PREPARANDO1:
 	ACALL clearDisplay
 	MOV A, #02h
@@ -268,7 +288,6 @@ PREPARANDO1:
 	MOV DPTR, #PREPARANDO
 	ACALL escreveStringROM
 	CALL delay1
-	LJMP PRONTO2
 PRONTO2:
 	ACALL clearDisplay
 	MOV A, #02h
@@ -299,6 +318,7 @@ finish:
 
 leituraTeclado:
     MOV R0, #0           ; zera R0 para começar a verificação
+    CLR F0
 
     ; escanear a primeira linha
     MOV P0, #0FFh   
