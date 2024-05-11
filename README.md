@@ -12,3 +12,6 @@ Trabalhar utilizando uma linguagem de mais baixo nível foi difícil, principalm
 
 ## Conclusão
 Por ser uma linguagem mais incomum, por causa das linguagens mais modernas o assembly acabou ficando para trás, mas foi bem legal aprender a programar em baixo nível, principalmente com o LCD e o teclado, é mais trabalhoso do que a maioria dos códigos que já fizemos em projetos passados em outras linguagens de programação, porém foi um bom desafio para o nosso desenvolvimento como programador.
+
+## Diagrama de Blocos
+<img width="963" alt="image" src="https://github.com/LeAlencar/projeto-assembly/assets/52898510/b81baa21-77ea-41db-8a92-adf406a0bb10">
